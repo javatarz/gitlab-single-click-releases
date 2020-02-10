@@ -11,7 +11,7 @@ import sttp.model.{Method, StatusCode}
 class GitlabApiClientTest extends FunSuite with BeforeAndAfter {
 
   val gitlabHost = "gitlab.example.com"
-  val gitlabToken = "8c2c353bce9cd246dc8dbc39c"
+  val gitlabToken = "fake-token"
   var apiClient: GitlabApiClient = _
   val pipelineStatus: String = getFileContent("src/test/resources/pipeline_response.json")
   val pipelineTrigger: String = getFileContent("src/test/resources/pipeline_trigger.json")
