@@ -4,7 +4,6 @@ import me.karun.gscr.client.models.{Pipeline, PipelineTrigger}
 import org.json4s.native.Serialization
 import sttp.client._
 import sttp.client.json4s._
-import sttp.model.Uri
 
 class GitlabApiClient(gitlabUrl: String, gitlabToken: String)
                      (implicit backend: SttpBackend[Identity, Nothing, NothingT]) {
@@ -13,7 +12,7 @@ class GitlabApiClient(gitlabUrl: String, gitlabToken: String)
   def getPipelineTriggers(projectId: String): Response[Either[ResponseError[Exception], List[PipelineTrigger]]] = {
     val response = basicRequest
       .header("PRIVATE-TOKEN", gitlabToken)
-      .get(Uri(gitlabUrl + "/api/v4/projects/" + projectId + "/triggers"))
+      .get(uri"$gitlabUrl/api/v4/projects/$projectId/triggers")
       .response(asJson[List[PipelineTrigger]])
       .send()
     response
@@ -22,7 +21,7 @@ class GitlabApiClient(gitlabUrl: String, gitlabToken: String)
   def getPipeline(projectId: String, pipelineId: String): Response[Either[ResponseError[Exception], Pipeline]] = {
     val response = basicRequest
       .header("PRIVATE-TOKEN", gitlabToken)
-      .get(Uri(gitlabUrl + "/api/v4/projects/" + projectId + "/pipelines/" + pipelineId))
+      .get(uri"$gitlabUrl/api/v4/projects/$projectId/pipelines/$pipelineId")
       .response(asJson[Pipeline])
       .send()
     response
@@ -31,7 +30,7 @@ class GitlabApiClient(gitlabUrl: String, gitlabToken: String)
   def triggerPipeline(projectId: String, pipeLineToken: String): Response[Either[ResponseError[Exception], Pipeline]] = {
     val response = basicRequest
       .body("token=" + pipeLineToken)
-      .post(Uri(gitlabUrl + "/api/v4/projects/" + projectId + "/pipelines/"))
+      .post(uri"$gitlabUrl/api/v4/projects/$projectId/pipelines/")
       .response(asJson[Pipeline])
       .send()
     response
@@ -41,7 +40,7 @@ class GitlabApiClient(gitlabUrl: String, gitlabToken: String)
     val response = basicRequest
       .header("PRIVATE-TOKEN", gitlabToken)
       .body("description=\"gxpp trigger\"")
-      .post(Uri(gitlabUrl + "/api/v4/projects/" + projectId + "/triggers"))
+      .post(uri"$gitlabUrl/api/v4/projects/$projectId/triggers")
       .response(asJson[PipelineTrigger])
       .send()
     response

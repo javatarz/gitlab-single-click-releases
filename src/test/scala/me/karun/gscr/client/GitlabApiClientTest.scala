@@ -10,7 +10,7 @@ import sttp.model.{Method, StatusCode}
 
 class GitlabApiClientTest extends FunSuite with BeforeAndAfter {
 
-  val gitlabHost = "gitlab.example.com"
+  val gitlabUrl = "http://gitlab.example.com"
   val gitlabToken = "fake-token"
   var apiClient: GitlabApiClient = _
   val pipelineStatus: String = getFileContent("src/test/resources/pipeline_response.json")
@@ -31,12 +31,12 @@ class GitlabApiClientTest extends FunSuite with BeforeAndAfter {
         || request.body.toString.contains("token")) => {
         Response.ok(pipelineStatus)
       }
-      case request if request.uri.toString().equals("http://gitlab.example.com%2Fapi%2Fv4%2Fprojects%2F1%2Ftriggers")
+      case request if request.uri.toString().equals("http://gitlab.example.com/api/v4/projects/1/triggers")
         && request.method.equals(Method.GET)
         && request.headers.exists(header => header.name.equals("PRIVATE-TOKEN") && header.value.length > 0) => {
         Response.ok(pipelineTriggerList)
       }
-      case request if request.uri.toString().equals("http://gitlab.example.com%2Fapi%2Fv4%2Fprojects%2F1%2Ftriggers")
+      case request if request.uri.toString().equals("http://gitlab.example.com/api/v4/projects/1/triggers")
         && request.method.equals(Method.POST)
         && request.headers.exists(header => header.name.equals("PRIVATE-TOKEN") && header.value.length > 0) => {
         Response.ok(pipelineTrigger)
@@ -52,7 +52,7 @@ class GitlabApiClientTest extends FunSuite with BeforeAndAfter {
   var expectedPipelineTriggerList: List[PipelineTrigger] = _
 
   before {
-    apiClient = new GitlabApiClient(gitlabHost, gitlabToken)
+    apiClient = new GitlabApiClient(gitlabUrl, gitlabToken)
     implicit val formats = DefaultFormats
     expectedPipeline = Serialization.read[Pipeline](pipelineStatus)
     expectedPipelineTrigger = Serialization.read[PipelineTrigger](pipelineTrigger)
